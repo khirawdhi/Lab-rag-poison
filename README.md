@@ -1,4 +1,4 @@
-# RAG Data Poisoning: When Knowledge Bases Lie
+# RAG Data Poisoning: Trust Boundary Failures in Retrieval-Augmented Generation Systems
 
 This repository demonstrates how **Retrieval-Augmented Generation (RAG)** systems can be compromised through **data poisoning at the knowledge base ingestion layer**, and how simple trust-based mitigations can reduce this risk.
 
@@ -10,7 +10,7 @@ This lab shows that:
 - The language model itself does **not** need to be hacked
 - Poisoning the **knowledge base** is sufficient to manipulate responses
 - Unsafe guidance can emerge purely from untrusted retrieved context
-- Simple retrieval-time controls can significantly reduce risk
+- Retrieval pipelines are security-critical components that require the same trust, authorization, and integrity controls as traditional enterprise applications.
 
 ## Learning Outcomes
 
@@ -29,6 +29,34 @@ After completing this lab, you will understand:
 - After ingestion, the assistant begins suggesting **insecure actions**, such as bypassing MFA.
 
 This project models that exact failure mode.
+
+## Threat Model
+
+### Assets
+
+- Corporate security policies
+- Internal knowledge base content
+- Employee trust in AI-generated responses
+
+### Threat Actor
+
+- Malicious contractor
+- Compromised vendor account
+- Insider with document upload permissions
+
+### Attack Goal
+
+Influence AI-generated responses by poisoning the retrieval corpus rather than attacking the language model directly.
+
+### Trust Boundary
+
+The critical trust boundary exists between:
+
+- Knowledge base ingestion
+- Retrieval pipeline
+- Prompt construction
+
+The attack succeeds when untrusted content is treated as authoritative context.
 
 ## RAG Architecture Overview
 
@@ -59,6 +87,18 @@ This simulates real-world defenses such as:
 - Trusted document allowlists
 - Segregated indexes
 - Retrieval-time policy enforcement
+
+## Additional Mitigations
+
+The lab demonstrates source-based trust filtering, but production systems often combine multiple controls:
+
+- Source allowlists
+- Document provenance verification
+- Content signing
+- Human approval workflows
+- Segregated vector indexes
+- Retrieval-time authorization checks
+- Trust scoring and ranking adjustments
 
 ## How to Run the Lab
 
@@ -91,12 +131,17 @@ For a **guided, task-based walkthrough**, including explanations and comprehensi
 room/room.md
 ```
 
-## Key Security Takeaways
+## Security Lessons Learned
 
-* RAG systems inherit the trustworthiness of their data sources
-* Knowledge base ingestion is a critical attack surface
-* Retrieval ranking can amplify malicious content
-* Trust controls are as important as model safeguards
+This lab demonstrates several broader security principles:
+
+- AI systems inherit the trustworthiness of their data sources
+- Retrieval is a security boundary
+- Data integrity is as important as model security
+- Authorization controls must extend into AI pipelines
+- Trust assumptions should be explicitly modeled and validated
+
+The safest LLM can still produce unsafe outputs when supplied with malicious context.
 
 ##  Disclaimer
 
