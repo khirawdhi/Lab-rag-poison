@@ -60,7 +60,7 @@ The attack succeeds when untrusted content is treated as authoritative context.
 
 ## RAG Architecture Overview
 
-![RAG Data Poisoning Pipeline](/room/img/rag_poisoning_pipeline.drawio.png)
+![RAG Data Poisoning Pipeline](room/img/RAG.png)
 
 ## What the Lab Demonstrates
 
