@@ -149,4 +149,4 @@ This project is for **educational and defensive security purposes only**. Do not
 
 ## Author
 
-Created as part of an **AI Security / RAG Threat Modeling exercise**.
+Khirawdhi Ray
