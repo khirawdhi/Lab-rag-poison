@@ -1,152 +1,84 @@
-# RAG Data Poisoning: Trust Boundary Failures in Retrieval-Augmented Generation Systems
+# RAG Data Poisoning Lab
 
-This repository demonstrates how **Retrieval-Augmented Generation (RAG)** systems can be compromised through **data poisoning at the knowledge base ingestion layer**, and how simple trust-based mitigations can reduce this risk.
+A hands-on lab demonstrating how **Retrieval-Augmented Generation (RAG)** systems can be manipulated through **knowledge base poisoning**, and how trust-based retrieval controls mitigate the attack.
 
-## What This Project Is About
+---
 
-Many modern AI assistants rely on RAG pipelines to retrieve internal documents before generating answers.   While this improves accuracy, it also introduces a critical attack surface: **the retrieval layer**.
+## What You'll Learn
 
-This lab shows that:
-- The language model itself does **not** need to be hacked
-- Poisoning the **knowledge base** is sufficient to manipulate responses
-- Unsafe guidance can emerge purely from untrusted retrieved context
-- Retrieval pipelines are security-critical components that require the same trust, authorization, and integrity controls as traditional enterprise applications.
+- How RAG retrieves external documents
+- How poisoned knowledge bases influence LLM responses
+- Why retrieval is a critical trust boundary
+- How trust filtering reduces data poisoning risks
 
-## Learning Outcomes
+---
 
-After completing this lab, you will understand:
+## Scenario
 
-- How RAG systems retrieve and use external documents
-- How malicious or untrusted documents influence AI-generated responses
-- What indicators suggest retrieved context is unsafe
-- How basic trust filtering mitigates RAG data poisoning
+An internal AI assistant retrieves documents from a knowledge base before answering employee questions.
 
-##  Scenario Overview
+A malicious document is added during ingestion, causing the assistant to recommend insecure actions (for example, bypassing MFA).
 
-- An internal AI assistant answers IT and security questions for employees.
-- The assistant retrieves documents from a knowledge base before generating answers.
-- A contractor/Vendor uploads a document that appears to be a legitimate policy update.
-- After ingestion, the assistant begins suggesting **insecure actions**, such as bypassing MFA.
-
-This project models that exact failure mode.
-
-## Threat Model
-
-### Assets
-
-- Corporate security policies
-- Internal knowledge base content
-- Employee trust in AI-generated responses
-
-### Threat Actor
-
-- Malicious contractor
-- Compromised vendor account
-- Insider with document upload permissions
-
-### Attack Goal
-
-Influence AI-generated responses by poisoning the retrieval corpus rather than attacking the language model directly.
-
-### Trust Boundary
-
-The critical trust boundary exists between:
-
-- Knowledge base ingestion
-- Retrieval pipeline
-- Prompt construction
-
-The attack succeeds when untrusted content is treated as authoritative context.
-
-## RAG Architecture Overview
+The language model itself is never compromised—the retrieved context is.
 
 ![RAG Data Poisoning Pipeline](room/img/RAG.png)
 
+---
+
 ## What the Lab Demonstrates
 
-The hands-on exercise compares three system states:
+1. Clean retrieval
+2. Poisoned retrieval
+3. Mitigated retrieval using trusted sources
 
-1. **Clean retrieval**  
-   Only trusted documents are indexed.
+The same prompt produces different answers based solely on the retrieved context.
 
-2. **Poisoned retrieval**  
-   A malicious document is injected during ingestion.
+---
 
-3. **Mitigated retrieval**  
-   Untrusted sources are filtered during retrieval.
-
-The same user query produces **different answers** depending only on retrieved context.
-
-##  Mitigation Demonstrated
-
-The lab implements a simple but effective mitigation:
-
-- **Source-based trust filtering at query time**
-
-This simulates real-world defenses such as:
-- Trusted document allowlists
-- Segregated indexes
-- Retrieval-time policy enforcement
-
-## Additional Mitigations
-
-The lab demonstrates source-based trust filtering, but production systems often combine multiple controls:
+## Mitigations
 
 - Source allowlists
-- Document provenance verification
-- Content signing
-- Human approval workflows
+- Document provenance
 - Segregated vector indexes
-- Retrieval-time authorization checks
-- Trust scoring and ranking adjustments
+- Retrieval-time authorization
+- Trust-based filtering
 
-## How to Run the Lab
+---
 
-From the project root:
+## Run the Lab
 
 ```bash
+# Build a clean index
 cd app
 python3 ingest.py --kb ../kb --index ../index_clean.json
+
+# Query
 python3 query.py --index ../index_clean.json --q "How do I access VPN if MFA is failing?"
-```
 
-Poison the knowledge base:
-
-```bash
+# Create a poisoned index
 python3 ingest.py --kb ../kb --inject ../injected --index ../index_poisoned.json
+
+# Query the poisoned index
 python3 query.py --index ../index_poisoned.json --q "How do I access VPN if MFA is failing?"
-```
 
-Apply mitigation:
-
-```bash
+# Query using trusted sources only
 python3 query.py --index ../index_poisoned.json --q "How do I access VPN if MFA is failing?" --trusted-only
 ```
 
-## Learner Walkthrough
+---
 
-For a **guided, task-based walkthrough**, including explanations and comprehension questions, see:
+## Key Takeaways
 
-```
-room/room.md
-```
+- Retrieval is a security boundary.
+- AI systems inherit the trustworthiness of their data.
+- Data integrity is as important as model security.
 
-## Security Lessons Learned
+---
 
-This lab demonstrates several broader security principles:
+## Disclaimer
 
-- AI systems inherit the trustworthiness of their data sources
-- Retrieval is a security boundary
-- Data integrity is as important as model security
-- Authorization controls must extend into AI pipelines
-- Trust assumptions should be explicitly modeled and validated
+This project is intended for educational and defensive security research only.
 
-The safest LLM can still produce unsafe outputs when supplied with malicious context.
+## License
 
-##  Disclaimer
-
-This project is for **educational and defensive security purposes only**. Do not use these techniques on systems you do not own or have permission to test.
-
-## Author
-
-Khirawdhi Ray
+MIT
